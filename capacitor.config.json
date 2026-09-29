@@ -1,0 +1,13 @@
+{
+  "appId": "com.aditya.spiderfalooda",
+  "appName": "Spider Beat Run",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

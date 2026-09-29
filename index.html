@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>DIMAAG KA FALOODA: SPIDER BEAT RUN</title>
+  <meta name="game-server" content="">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co wss://* ws://*; media-src 'self' blob: data: https:; object-src 'none'; base-uri 'self';">
+  
+  <!-- PWA Manifest & Mobile App Identifiers -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#E62429">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Spider Beat Run">
+  
+  <!-- PNG & Maskable App Icons for Mobile & Desktop PWA -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png">
+  
+  <!-- Immediate PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(reg) {
+          console.log('[PWA] Service Worker registered:', reg.scope);
+        }).catch(function(err) {
+          console.warn('[PWA] Service Worker error:', err);
+        });
+      });
+      navigator.serviceWorker.register('/sw.js').catch(function() {});
+    }
+  </script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans, Space Grotesk, Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Funky Fluid Glassmorphism Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Supabase JS Client for Realtime Global Leaderboard (Pinned with SRI integrity verification) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js"
+          integrity="sha384-YieCqqg9gQufX7+5HcFvCEg/n3KUEdl8/Jb+A6J0npf1mB740VayvwKjTrtCeUoy"
+          crossorigin="anonymous" defer></script>
+</head>
+<body>
+
+  <!-- Interactive Ambient Funky Doodad Canvas -->
+  <canvas id="ambientCanvas"></canvas>
+
+  <!-- Master Application Container (Adaptive: PC Cockpit vs Mobile Handheld) -->
+  <div id="app">
+
+    <!-- Top Funky Glass Header -->
+    <header class="funky-header">
+      <div class="header-brand">
+        <div class="brand-icon-box spider-brand-icon">
+          <svg viewBox="0 0 24 24">
+            <!-- Spider Mask Vector -->
+            <path d="M12 2C6.5 2 3 6.5 3 12c0 4.5 3.5 9.5 9 10 5.5-.5 9-5.5 9-10 0-5.5-3.5-10-9-10z" fill="#E62429"/>
+            <path d="M5.5 11c2.5 3 6 4 7 4-1-2.5-2-5.5-2.5-7-1.5.5-3.5 1.5-4.5 3z" fill="#FFFFFF" stroke="#000" stroke-width="1"/>
+            <path d="M18.5 11c-2.5 3-6 4-7 4 1-2.5 2-5.5 2.5-7 1.5.5 3.5 1.5 4.5 3z" fill="#FFFFFF" stroke="#000" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <h1 class="kinetic-text">DIMAAG KA FALOODA</h1>
+          <div class="badge-sub">SPIDER EDITION</div>
+        </div>
+      </div>
+
+      <!-- Live Dynamic Activity Capsule -->
+      <div id="funkyStatusCapsule" class="funky-status-capsule">
+        <span class="capsule-text">READY TO RUN</span>
+      </div>
+
+      <div class="header-actions">
+        <!-- Animated Motion-Based Audio Toggle -->
+        <button id="btnSoundToggle" class="btn-funky audio-active" title="Toggle Sound & Voices">
+          <div class="audio-eq-icon">
+            <svg viewBox="0 0 24 24">
+              <!-- Speaker Body -->
+              <path d="M3 9v6h4l5 5V4L7 9H3z" fill="currentColor"/>
+              <!-- Motion Equalizer Bars -->
+              <rect class="eq-bar eq-bar-1" x="14" y="8" width="2" height="8" rx="1" fill="currentColor"/>
+              <rect class="eq-bar eq-bar-2" x="17.5" y="5" width="2" height="14" rx="1" fill="currentColor"/>
+              <rect class="eq-bar eq-bar-3" x="21" y="9" width="2" height="6" rx="1" fill="currentColor"/>
+              <!-- Mute Slash line -->
+              <line class="eq-mute-slash" x1="2" y1="2" x2="22" y2="22" stroke="#FF3366" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span id="soundStatusText">AUDIO: ON</span>
+        </button>
+
+        <!-- Retro-Terminal Hindi Lo-Fi Chill Radio Button -->
+        <button id="btnRadioToggle" class="btn-funky" title="Open Hindi Lo-Fi Chill Radio Terminal">
+          <div class="radio-icon-box">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="currentColor"/>
+              <circle class="radio-signal radio-signal-1" cx="6" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path class="radio-signal radio-signal-2" d="M3 3a6 6 0 0 1 6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span id="radioStatusText">RADIO [108.4]</span>
+        </button>
+
+        <!-- Return Menu Button -->
+        <button id="btnNavMenu" class="btn-funky" style="display: none;">
+          MENU
+        </button>
+      </div>
+    </header>
+
+    <!-- =====================================================================
+         SCREEN 1: MAIN LOBBY (ADAPTIVE: 2-COL ON PC, SINGLE-COL ON MOBILE)
+         ===================================================================== -->
+    <div id="view-menu" class="screen-view active">
+      <!-- Left Column on PC / Top Card on Mobile -->
+      <div class="funky-hero-card">
+        <svg class="hero-sparkle-top" viewBox="0 0 24 24"><path d="M12 0l2.5 8.5L23 11l-8.5 2.5L12 22l-2.5-8.5L1 11l8.5-2.5z"/></svg>
+        <div>
+          <h2 class="kinetic-text">DIMAAG KA FALOODA</h2>
+          <div class="hero-chips-row">
+            <span class="chip-tag">SPIDER-MAN EDITION</span>
+            <span class="chip-tag">9-TILE REFLEX (3x3)</span>
+            <span class="chip-tag">50 HINDI LO-FI SONGS</span>
+          </div>
+
+          <!-- Real-Time Desi Taunt Banner -->
+          <div class="desi-taunt-pill">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <span id="lblDesiTaunt">Arey Sharma ji ke ladke ko dekho!</span>
+          </div>
+        </div>
+
+        <!-- Operator Profile Pill -->
+        <div class="operator-pill">
+          <div class="operator-info">
+            <div id="lblPlayerAvatarPreview" class="operator-avatar-preview">
+              <!-- Injected via game.js -->
+            </div>
+            <div style="text-align: left;">
+              <div style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">ACTIVE SPIDER-MAN OPERATIVE</div>
+              <div id="lblPlayerHandle" class="operator-handle kinetic-text-gold">REGISTER_NAME</div>
+            </div>
+          </div>
+          <button id="btnEditProfile" class="btn-funky" style="padding: 6px 11px; font-size: 0.78rem;">SPIDER IDENTITY</button>
+        </div>
+      </div>
+
+      <!-- Right Column on PC / Bottom Stack on Mobile -->
+      <div class="menu-right-col">
+        <!-- Mode Selection (Single Player Focused) -->
+        <div class="modes-list">
+          <!-- Solo Campaign -->
+          <div id="btnStartSolo" class="mode-item-glass primary-solo-mode">
+            <div class="mode-icon-bubble">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            </div>
+            <div class="mode-details">
+              <span class="mode-badge">SPIDER-MAN CAMPAIGN // 9-TILE MATRIX (3x3)</span>
+              <div class="mode-name">START MISSION</div>
+              <div class="mode-desc">9-Tile Stark Neural Matrix & 50 Peaceful Hindi Lo-Fi Songs</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avengers Super Hero Themes Selector -->
+        <div class="spiderman-suit-card">
+          <div class="spider-suit-header">
+            <div class="spider-lens-box">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.5 2 3 6.5 3 12c0 4.5 3.5 9.5 9 10 5.5-.5 9-5.5 9-10 0-5.5-3.5-10-9-10z" fill="#E62429"/>
+                <path d="M5.5 11c2.5 3 6 4 7 4-1-2.5-2-5.5-2.5-7-1.5.5-3.5 1.5-4.5 3z" fill="#FFFFFF" stroke="#000" stroke-width="1.2"/>
+                <path d="M18.5 11c-2.5 3-6 4-7 4 1-2.5 2-5.5 2.5-7 1.5.5 3.5 1.5 4.5 3z" fill="#FFFFFF" stroke="#000" stroke-width="1.2"/>
+              </svg>
+            </div>
+            <div class="suit-text-block">
+              <div class="suit-title kinetic-text">STARK NANOTECH SUIT // MARK IV</div>
+              <div class="suit-sub">100% SPIDER-MAN PROTOCOL // SPIDER-SENSE &amp; WEB-SLINGER</div>
+            </div>
+          </div>
+          <div class="spider-telemetry-chips">
+            <span class="spider-chip"><span class="spider-dot pulse"></span> WEB-ZIP CHRONO</span>
+            <span class="spider-chip"><span class="spider-dot"></span> 3x3 NEURAL MATRIX</span>
+            <span class="spider-chip"><span class="spider-dot"></span> PETER TINGLE</span>
+            <span class="spider-chip"><span class="spider-dot pulse"></span> 108.4 FM RADIO</span>
+          </div>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="menu-bottom-row">
+          <button id="btnOpenLeaderboard" class="btn-funky">
+            <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1c1.9-.38 3.4-1.95 3.61-3.94C19.08 11.63 21 9.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+            GLOBAL LEADERBOARD (TOP 10)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SCREEN 2: SINGLE PLAYER (ADAPTIVE: 3-COL COCKPIT ON PC, STACK ON MOBILE)
+         ===================================================================== -->
+    <!-- =====================================================================
+         SCREEN 2: SINGLE PLAYER (CLEAN FOCUSED ARENA)
+         ===================================================================== -->
+    <div id="view-singleplay" class="screen-view">
+      <div class="singleplay-responsive-layout">
+
+        <!-- CENTER STAGE (ARENA & CORE ENGINE) -->
+        <div class="desktop-center-stage">
+          <!-- HUD Stat Bar -->
+          <div class="matrix-hud-row">
+            <div class="hud-stat-pill">
+              <div class="hud-stat-label">LEVEL</div>
+              <div id="spLevel" class="hud-stat-value glow-accent">LVL 1</div>
+            </div>
+            <div class="hud-stat-pill">
+              <div class="hud-stat-label">SCORE</div>
+              <div id="spScore" class="hud-stat-value kinetic-text">0</div>
+            </div>
+            <div class="hud-stat-pill">
+              <div class="hud-stat-label">3 SHIELDS</div>
+              <div class="shields-container">
+                <svg id="shield-1" class="shield-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                <svg id="shield-2" class="shield-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                <svg id="shield-3" class="shield-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mini Radio Player Bar (In-Game Lo-Fi Audio Deck) -->
+          <div id="miniRadioBar" class="mini-radio-bar">
+            <div class="mini-radio-info" id="miniRadioInfoBtn" title="Click to view radio tracklist">
+              <div class="mini-radio-equalizer">
+                <span class="m-eq-bar bar-1"></span>
+                <span class="m-eq-bar bar-2"></span>
+                <span class="m-eq-bar bar-3"></span>
+              </div>
+              <div class="mini-radio-text">
+                <span id="miniRadioTrackTitle" class="mini-track-title">KESARIYA</span>
+                <span id="miniRadioTrackArtist" class="mini-track-artist">Arijit Singh // Hindi Lo-Fi</span>
+              </div>
+            </div>
+            <div class="mini-radio-controls">
+              <button id="btnMiniRadioPrev" class="btn-mini-ctrl" title="Previous Song">
+                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" fill="currentColor"/></svg>
+              </button>
+              <button id="btnMiniRadioPlayPause" class="btn-mini-ctrl primary" title="Play/Pause Music">
+                <svg id="miniRadioPlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+              </button>
+              <button id="btnMiniRadioNext" class="btn-mini-ctrl" title="Next Song">
+                <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" fill="currentColor"/></svg>
+              </button>
+              <button id="btnMiniRadioExpand" class="btn-mini-ctrl radio-expand-btn" title="Open 108.4 FM Radio Deck">
+                <span class="radio-freq-badge">108.4 FM</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Combo Streak Surge Row -->
+          <div class="combo-streak-row">
+            <div class="streak-pill-tag">
+              <svg viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+              <span id="spStreakLabel">1X STREAK</span>
+            </div>
+            <span id="spStreakBonusTag" class="streak-multiplier-badge">+0 PTS BONUS</span>
+          </div>
+
+          <!-- 3 Desi Jugaad Powers -->
+          <div class="jugaad-powers-row">
+            <button id="btnPowerChai" class="power-btn spider-power-btn" title="Web-Zip: Snare the speed timer for 2.5s! (Key: C)">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/>
+                <path d="M12 3v18M3 12h18M5.5 5.5l13 13M5.5 18.5l13-13" stroke="currentColor" stroke-width="1.2"/>
+                <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+              </svg>
+              WEB-ZIP [C]
+            </button>
+            <button id="btnPowerChashma" class="power-btn spider-power-btn" title="Spider-Sense: Tingle peek the next tile for 450ms! (Key: V)">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2.2 2.2M16.8 16.8l2.2 2.2M5 19l2.2-2.2M16.8 7.2l2.2-2.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              SENSE [V]
+            </button>
+            <button id="btnPowerThink" class="power-btn think-btn spider-power-btn" title="Peter Tingle: Spider instinct reveals the step! (Key: T)">
+              <svg class="bulb-rays" viewBox="0 0 24 24">
+                <path d="M12 2C6.5 2 3 6.5 3 12c0 4.5 3.5 9.5 9 10 5.5-.5 9-5.5 9-10 0-5.5-3.5-10-9-10z" fill="currentColor"/>
+                <path d="M6 11c2 2.5 5 3.2 6 3.2-0.8-2-1.6-4.5-2-5.7-1.2 0.4-2.8 1.2-4 2.5z" fill="#000"/>
+                <path d="M18 11c-2.5 3-6 4-7 4 1-2.5 2-5.5 2.5-7 1.5.5 3.5 1.5 4.5 3z" fill="#000"/>
+              </svg>
+              TINGLE [T]
+            </button>
+          </div>
+
+          <!-- Phase Directive Banner -->
+          <div class="phase-status-glass">
+            <span class="phase-text-title">DIRECTIVE</span>
+            <span id="spPhasePill" class="phase-pill-badge memorize">MEMORIZE SEQUENCE</span>
+          </div>
+
+          <!-- Depleting Speed Timer Bar -->
+          <div class="speed-timer-track">
+            <div id="spTimerFill" class="speed-timer-fill"></div>
+          </div>
+
+          <!-- Escalating Dynamic Glass Matrix Arena (9 -> 12 -> 15 -> 20 -> 30 -> 40 -> 60 Blocks) -->
+          <div id="singleMatrixCard" class="matrix-arena-card">
+            <div class="fever-badge-pill">2X FEVER MODE!</div>
+
+            <!-- Reverse Order Attention Middle Popup -->
+            <div id="reverseAttentionOverlay" class="reverse-attention-overlay" style="display: none;">
+              <div class="reverse-modal-box">
+                <div class="reverse-alert-tag">ATTENTION!</div>
+                <h3 class="reverse-title kinetic-text">REVERSE ORDER MODE!</h3>
+                <p class="reverse-desc">DHYAN DE! NOW TAP TILES IN REVERSE ORDER (LAST TO FIRST)!</p>
+                <div class="reverse-rule-badge">REVERSE RECALL // TAKE YOUR TIME</div>
+                <button id="btnDismissReverse" class="btn-funky primary reverse-action-btn">READY! LET'S GO</button>
+              </div>
+            </div>
+
+            <div id="singleMatrixGrid" class="matrix-grid-dynamic">
+              <!-- Dynamically populated via setupSinglePlayerGrid() in game.js without any numpad hints -->
+            </div>
+          </div>
+
+          <!-- Live Brain IQ Rank Banner -->
+          <div class="iq-meter-banner">
+            <span>BRAIN STATUS:</span>
+            <span id="spBrainIQ" class="iq-badge kinetic-text">SPIDER INITIATE (50 IQ)</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SCREEN 5: GAME OVER & SUMMARY BREAKDOWN
+         ===================================================================== -->
+    <div id="view-gameover" class="screen-view">
+      <div class="gameover-glass-panel">
+        <div class="go-title-text">MOYE MOYE!</div>
+        <div id="goReason" class="go-sub-text">ALL 3 NEURAL SHIELDS LOST</div>
+
+        <div style="font-size: 0.76rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">FINAL SCORE</div>
+        <div id="goFinalScore" class="go-hero-score kinetic-text">0</div>
+
+        <!-- 2x2 Telemetry Grid -->
+        <div class="metrics-2x2-grid">
+          <div class="metric-cell">
+            <div class="metric-cell-lbl">LEVEL REACHED</div>
+            <div id="goMaxLevel" class="metric-cell-val glow-accent">LVL 1</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-cell-lbl">BEST STREAK</div>
+            <div id="goStreak" class="metric-cell-val glow-gold">0X</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-cell-lbl">ALL-TIME BEST</div>
+            <div id="goHighScore" class="metric-cell-val">0</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-cell-lbl">VERDICT</div>
+            <div class="metric-cell-val" style="font-size: 0.88rem; color: var(--color-danger);">KHATAM TATA!</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button id="btnRestartGame" class="btn-funky primary" style="height: 48px; font-size: 1rem;">
+          PLAY AGAIN (EK AUR BAAR)
+        </button>
+        <button id="btnGameOverMenu" class="btn-funky" style="height: 44px;">
+          RETURN TO MENU
+        </button>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SCREEN 6: TOP 10 LEADERBOARD (LIVE REALTIME SYNC)
+         ===================================================================== -->
+    <div id="view-leaderboard" class="screen-view">
+      <div class="leaderboard-glass-box">
+        <div class="lb-header-row">
+          <h2 class="kinetic-text">TOP 10 OPERATORS</h2>
+          <span id="lbSyncBadge" style="font-size: 0.72rem; color: var(--color-accent); font-family: var(--font-mono); font-weight: 800;">
+            LIVE REALTIME SYNC
+          </span>
+        </div>
+
+        <ul id="leaderboardList" class="lb-rows-container">
+          <!-- Populated via game.js -->
+        </ul>
+      </div>
+
+      <button id="btnLeaderboardBack" class="btn-funky" style="height: 44px;">
+        BACK TO MENU
+      </button>
+    </div>
+
+  </div> <!-- /#app -->
+
+  <!-- =======================================================================
+       MODAL 1: OPERATOR PROFILE & AVATAR PICKER (ZERO EMOJIS)
+       ======================================================================= -->
+  <div id="modalProfile" class="glass-modal-backdrop">
+    <div class="glass-modal-card" style="width: 100%; max-width: 400px;">
+      <h2 class="kinetic-text">SPIDER-VERSE SUIT PROTOCOL</h2>
+      <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px;">
+        Choose your Superhero operative avatar and write your own custom callsign to enter the 9-Tile 3x3 Matrix.
+      </p>
+
+      <!-- SVG Avatar Grid (Zero Emojis!) -->
+      <div id="avatarGrid" class="avatar-selector-grid">
+        <!-- Injected via game.js -->
+      </div>
+
+      <div style="margin-top: 10px; text-align: left;">
+        <label for="inputPlayerHandle" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+          SPIDER CODENAME:
+        </label>
+        <input type="text" id="inputPlayerHandle" class="glass-input-field" maxlength="16" placeholder="WRITE YOUR NAME (e.g. SPIDER_PETER)" autocomplete="off" autocapitalize="characters">
+        <div id="profileValidationMsg" style="font-size: 0.72rem; color: var(--color-danger); margin-top: 4px; display: none;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px;">
+        <button id="btnSaveProfile" class="btn-funky primary" style="width: 100%; height: 46px; font-weight: 800;">
+          CONFIRM HERO & ENTER
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================================
+       MODAL 3: RETRO HACKER / LO-FI CHILL RADIO TERMINAL (ZERO EMOJIS)
+       ======================================================================= -->
+  <div id="modalRadioTerminal" class="glass-modal-backdrop">
+    <div class="terminal-modal-card">
+      <!-- Terminal Window Bar -->
+      <div class="terminal-bar">
+        <div class="terminal-dots">
+          <span class="term-dot dot-red"></span>
+          <span class="term-dot dot-yellow"></span>
+          <span class="term-dot dot-green"></span>
+        </div>
+        <div class="terminal-title">TERMINAL // 50 HINDI LO-FI SONGS (108.4 FM)</div>
+        <button id="btnCloseRadioTerminal" class="term-close-btn" title="Minimize Radio">X</button>
+      </div>
+
+      <!-- Live CRT Scanline Overlay -->
+      <div class="terminal-screen">
+        <div class="terminal-crt-scanline"></div>
+
+        <!-- Terminal Status & Banner -->
+        <div class="term-log-header">
+          <div class="term-badge-live">STATION ACTIVE</div>
+          <div class="term-freq">50 SOULFUL HINDI LO-FI TRACKS</div>
+        </div>
+
+        <div class="terminal-sys-log" id="terminalSysLog">
+          > 108.4 FM: 50 PEACEFUL HINDI SONGS (ARIJIT // TALWINDER // ADITYA RIKHARI // ANUV JAIN)<br>
+          > BACKGROUND PLAYBACK ACTIVE DURING GAMEPLAY
+        </div>
+
+        <!-- Real-Time Audio Visualizer Canvas -->
+        <div class="terminal-viz-box">
+          <canvas id="terminalVisualizerCanvas" width="380" height="48"></canvas>
+        </div>
+
+        <!-- Search & Filter Bar for 50 Songs -->
+        <div style="margin: 8px 0;">
+          <input type="text" id="terminalTrackSearch" class="glass-input-field" placeholder="FILTER 50 SONGS (e.g. Arijit, Anuv, Kesariya, Faasle...)" style="font-size: 0.76rem; padding: 7px 12px; width: 100%; font-family: var(--font-mono);">
+        </div>
+
+        <!-- Track List (50 Melodious Hindi Songs - Populated via game.js) -->
+        <div class="terminal-tracks-list" id="terminalTracksList">
+          <!-- Populated dynamically via renderRadioTracks() in game.js -->
+        </div>
+
+        <!-- Terminal Deck / Controls Bar -->
+        <div class="terminal-controls-deck">
+          <div class="term-ctrl-buttons">
+            <button id="btnRadioPrev" class="term-ctrl-btn">[ PREV ]</button>
+            <button id="btnRadioPlayPause" class="term-ctrl-btn active">[ PLAY ]</button>
+            <button id="btnRadioNext" class="term-ctrl-btn">[ NEXT ]</button>
+            <span class="term-ctrl-btn" style="pointer-events: none; opacity: 0.85; border-color: var(--color-primary); color: var(--color-accent);">[ 108.4 FM LIVE ]</span>
+          </div>
+          <div class="term-volume-box">
+            <span class="term-vol-label">VOL:</span>
+            <input type="range" id="radioVolumeSlider" min="0" max="100" value="70" class="term-slider">
+          </div>
+        </div>
+
+        <button id="btnMinimizeRadio" class="term-action-btn">
+          [ PLAY IN BACKGROUND & RESUME GAME ]
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- External Master Game Engine Script -->
+  <script src="game.js" defer></script>
+</body>
+</html>

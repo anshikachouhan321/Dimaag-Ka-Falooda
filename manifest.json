@@ -1,0 +1,68 @@
+{
+  "name": "Dimaag Ka Falooda: Spider Beat Run",
+  "short_name": "Spider Beat",
+  "description": "High-stakes spatial memory reflex web game with Spider-Man theme, 3x3 matrix grid, retro Hindi Lo-Fi radio, and real-time global leaderboard.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#06070A",
+  "theme_color": "#E62429",
+  "categories": ["games", "arcade", "music"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Spider Beat Run Cockpit Arena on Desktop"
+    },
+    {
+      "src": "/screenshots/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Spider Beat Run Mobile Handheld Mode"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Spider Beat Run",
+      "short_name": "Play",
+      "description": "Start a high-stakes Spider-Man memory reflex run",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

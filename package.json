@@ -1,0 +1,35 @@
+{
+  "name": "dimaag-ka-falooda",
+  "version": "3.0.0",
+  "description": "High-stakes spatial memory reflex web game with dynamic matrix grid scaling, retro radio terminal, real Hindi Lo-Fi audio, and live DJ beat synchronizer.",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aditya2438/Dimaag-Ka-Falooda.git"
+  },
+  "homepage": "https://aditya2438.github.io/Dimaag-Ka-Falooda/",
+  "scripts": {
+    "start": "node server.js",
+    "test": "playwright test",
+    "test:load": "k6 run tests/load.k6.js",
+    "build:mobile": "node build-mobile.js"
+  },
+  "keywords": [
+    "dimaag-ka-falooda",
+    "spatial-memory",
+    "frosted-glassmorphism",
+    "web-audio-api",
+    "multiplayer-duel",
+    "dj-beats"
+  ],
+  "author": "aditya2438",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/core": "^6.2.0",
+    "@supabase/supabase-js": "^2.49.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0"
+  }
+}
